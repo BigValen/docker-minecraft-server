@@ -83,6 +83,10 @@ if isTrue "${ENABLE_AUTOPAUSE}"; then
   ${SCRIPTS:-/}start-autopause
 fi
 
+log "Starting dragonproxy"
+(cd /tmp/ ; java -jar /DragonProxy.jar &)
+
+
 log "Resolving type given ${TYPE}"
 case "${TYPE^^}" in
   *BUKKIT|SPIGOT)

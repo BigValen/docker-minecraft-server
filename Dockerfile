@@ -1,6 +1,6 @@
 FROM adoptopenjdk:16-jre
 
-LABEL org.opencontainers.image.authors="Geoff Bourne <itzgeoff@gmail.com>"
+LABEL maintainer "bigvalen"
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
@@ -23,11 +23,12 @@ RUN apt-get update \
     && apt-get clean
 
 RUN addgroup --gid 1000 minecraft \
-  && adduser --system --shell /bin/false --uid 1000 --ingroup minecraft --home /data minecraft
+  && adduser --system --shell /bin/false --uid 1000 --ingroup minecraft --home /data minecraft \
+  && mkdir -m 777 /data \
+  && chown minecraft:minecraft /data /home/minecraft
 
 COPY files/sudoers* /etc/sudoers.d
-
-EXPOSE 25565 25575
+EXPOSE 25565 25575 19132/udp
 
 # hook into docker BuildKit --platform support
 # see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
@@ -59,10 +60,14 @@ RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
  --var version=0.1.1 --var app=maven-metadata-release --file {{.app}} \
  --from https://github.com/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
 
+RUN wget  --no-check-certificate https://github.com/BigValen/docker-minecraft-server/raw/master/DragonProxy.jar
+COPY DragonProxy.jar /
+
 COPY mcstatus /usr/local/bin
 
 VOLUME ["/data"]
 COPY server.properties /tmp/server.properties
+COPY dragonproxy-config.yml /tmp/config.yml
 COPY log4j2.xml /tmp/log4j2.xml
 WORKDIR /data
 
