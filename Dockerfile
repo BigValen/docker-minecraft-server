@@ -1,6 +1,6 @@
 FROM openjdk:8u212-jre-alpine
 
-LABEL maintainer "itzg"
+LABEL maintainer "bigvalen"
 
 RUN apk add --no-cache -U \
   openssl \
@@ -12,6 +12,7 @@ RUN apk add --no-cache -U \
   curl iputils wget \
   git \
   jq \
+  maven \
   mysql-client \
   tzdata \
   rsync \
@@ -24,7 +25,7 @@ RUN addgroup -g 1000 minecraft \
   && mkdir -m 777 /data \
   && chown minecraft:minecraft /data /home/minecraft
 
-EXPOSE 25565 25575
+EXPOSE 25565 25575 19132/udp
 
 # hook into docker BuildKit --platform support
 # see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
@@ -56,10 +57,14 @@ RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
  --var version=0.1.1 --var app=maven-metadata-release --file {{.app}} \
  --from https://github.com/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
 
+RUN wget  --no-check-certificate https://github.com/BigValen/docker-minecraft-server/raw/master/DragonProxy.jar
+COPY DragonProxy.jar /
+
 COPY mcstatus /usr/local/bin
 
 VOLUME ["/data"]
 COPY server.properties /tmp/server.properties
+COPY dragonproxy-config.yml /tmp/config.yml
 COPY log4j2.xml /tmp/log4j2.xml
 WORKDIR /data
 
