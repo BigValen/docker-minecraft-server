@@ -4,6 +4,10 @@
 [![Discord](https://img.shields.io/discord/660567679458869252)](https://discord.gg/DXfKpjB)
 [![](https://img.shields.io/badge/Donate-Buy%20me%20a%20coffee-orange.svg)](https://www.buymeacoffee.com/itzg)
 
+This docker image includes DragonProxy and will have loads of cool mods.
+
+
+
 This docker image provides a Minecraft Server that will automatically download the latest stable
 version at startup. You can also run/upgrade to any specific version or the
 latest snapshot. See the _Versions_ section below for more information.
