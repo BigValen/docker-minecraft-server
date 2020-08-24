@@ -2,28 +2,26 @@ FROM adoptopenjdk:16-jre
 
 LABEL maintainer "bigvalen"
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive \
-  apt-get install -y \
-    imagemagick \
-    gosu \
-    sudo \
-    net-tools \
-    curl wget \
-    git \
-    jq \
-    dos2unix \
-    mysql-client \
-    tzdata \
-    rsync \
-    nano \
-    unzip \
-    knockd \
-    ttf-dejavu \
-    && apt-get clean
+RUN apk add --no-cache -U \
+  openssl \
+  imagemagick \
+  lsof \
+  su-exec \
+  shadow \
+  bash \
+  curl iputils wget \
+  git \
+  jq \
+  maven \
+  mysql-client \
+  tzdata \
+  rsync \
+  nano \
+  sudo \
+  knock
 
-RUN addgroup --gid 1000 minecraft \
-  && adduser --system --shell /bin/false --uid 1000 --ingroup minecraft --home /data minecraft \
+RUN addgroup -g 997 minecraft \
+  && adduser -Ss /bin/false -u 101000 -G minecraft -h /home/minecraft minecraft \
   && mkdir -m 777 /data \
   && chown minecraft:minecraft /data /home/minecraft
 
@@ -71,15 +69,13 @@ COPY dragonproxy-config.yml /tmp/config.yml
 COPY log4j2.xml /tmp/log4j2.xml
 WORKDIR /data
 
-STOPSIGNAL SIGTERM
-
-ENV UID=1000 GID=1000 \
-  MEMORY="1G" \
-  TYPE=VANILLA VERSION=LATEST \
-  ENABLE_RCON=true RCON_PORT=25575 RCON_PASSWORD=minecraft \
-  SERVER_PORT=25565 ONLINE_MODE=TRUE SERVER_NAME="Dedicated Server" \
-  ENABLE_AUTOPAUSE=false AUTOPAUSE_TIMEOUT_EST=3600 AUTOPAUSE_TIMEOUT_KN=120 AUTOPAUSE_TIMEOUT_INIT=600 \
-  AUTOPAUSE_PERIOD=10 AUTOPAUSE_KNOCK_INTERFACE=eth0
+ENV UID=101000 GID=997 \
+  JVM_XX_OPTS="-XX:+UseG1GC" MEMORY="1G" \
+  TYPE=VANILLA VERSION=LATEST FORGEVERSION=RECOMMENDED SPONGEBRANCH=STABLE SPONGEVERSION= FABRICVERSION=LATEST LEVEL=world \
+  PVP=true DIFFICULTY=easy ENABLE_RCON=true RCON_PORT=25575 RCON_PASSWORD=minecraft \
+  LEVEL_TYPE=DEFAULT SERVER_PORT=25565 ONLINE_MODE=TRUE SERVER_NAME="Dedicated Server" \
+  REPLACE_ENV_VARIABLES="FALSE" ENV_VARIABLE_PREFIX="CFG_" \
+  ENABLE_AUTOPAUSE=false AUTOPAUSE_TIMEOUT_EST=3600 AUTOPAUSE_TIMEOUT_KN=120 AUTOPAUSE_TIMEOUT_INIT=600 AUTOPAUSE_PERIOD=10
 
 COPY start* /
 COPY health.sh /
