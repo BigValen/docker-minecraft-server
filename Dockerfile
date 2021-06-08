@@ -20,13 +20,11 @@ RUN apt-get update \
     unzip \
     knockd \
     ttf-dejavu \
-    vim-minimal \
+    vim \
     && apt-get clean
 
 RUN addgroup --gid 1000 minecraft \
-  && adduser --system --shell /bin/false --uid 101000 --ingroup minecraft --home /data minecraft         
-  && mkdir -m 777 /data \
-  && chown minecraft:minecraft /data /home/minecraft
+  && adduser --system --shell /bin/false --uid 101000 --ingroup minecraft --home /data minecraft
 
 COPY files/sudoers* /etc/sudoers.d
 EXPOSE 25565 25575 19132/udp
