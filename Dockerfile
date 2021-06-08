@@ -1,24 +1,27 @@
 FROM adoptopenjdk:16-jre
 
-LABEL maintainer "bigvalen"
+LABEL org.opencontainers.image.authors="Geoff Bourne <itzgeoff@gmail.com>"
 
-RUN apk add --no-cache -U \
-  openssl \
-  imagemagick \
-  lsof \
-  su-exec \
-  shadow \
-  bash \
-  curl iputils wget \
-  git \
-  jq \
-  maven \
-  mysql-client \
-  tzdata \
-  rsync \
-  nano \
-  sudo \
-  knock
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive \
+  apt-get install -y \
+    imagemagick \
+    gosu \
+    sudo \
+    net-tools \
+    curl wget \
+    git \
+    jq \
+    dos2unix \
+    mysql-client \
+    tzdata \
+    rsync \
+    nano \
+    unzip \
+    knockd \
+    ttf-dejavu \
+    vim-minimal \
+    && apt-get clean
 
 RUN addgroup -g 997 minecraft \
   && adduser -Ss /bin/false -u 101000 -G minecraft -h /home/minecraft minecraft \
