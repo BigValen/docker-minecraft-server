@@ -44,3 +44,5 @@ if ! isTrue "${SKIP_SUDO:-false}" && [ $(id -u) = 0 ]; then
 else
   exec ${SCRIPTS:-/}start-configuration $@
 fi
+
+sleep 1200

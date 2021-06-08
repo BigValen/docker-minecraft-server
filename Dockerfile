@@ -31,8 +31,8 @@ EXPOSE 25565 25575 19132/udp
 
 # hook into docker BuildKit --platform support
 # see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
-ARG TARGETOS
-ARG TARGETARCH
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
 ARG TARGETVARIANT
 
 ARG EASY_ADD_VER=0.7.1
